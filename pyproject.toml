@@ -1,0 +1,34 @@
+[project]
+name = "ai-data-scientist-demo"
+version = "0.1.0"
+description = "AI-powered analytics engine: upload data, ask questions, get analyses."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "anthropic>=1.9.0",
+    "fastapi>=0.141.1",
+    "ipykernel>=7.3.0",
+    "jupyter-client>=8.10.0",
+    "matplotlib>=3.11.2",
+    "numpy>=2.4.6",
+    "openpyxl>=3.1.5",
+    "pandas>=3.0.6",
+    "pyarrow>=25.0.1",
+    "python-dotenv>=1.2.3",
+    "python-multipart>=0.0.32",
+    "scikit-learn>=1.9.1",
+    "scipy>=1.17.1",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.15.0",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[project.scripts]
+analytics-engine = "analytics_engine.server:run"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["analytics_engine"]

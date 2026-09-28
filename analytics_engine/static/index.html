@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Analytics Engine</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><rect width='24' height='24' rx='6' fill='%232a78d6'/><path d='M6 17V11M10 17V7M14 17v-4M18 17V9' stroke='white' stroke-width='2.2' stroke-linecap='round'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M6 17V11M10 17V7M14 17v-4M18 17V9"/></svg>
+        </span>
+        <div>
+          <div class="brand-name">Analytics Engine</div>
+          <div class="brand-sub">AI data scientist</div>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-block" id="newSession">
+        <svg viewBox="0 0 24 24" class="icon"><path d="M12 5v14M5 12h14"/></svg>
+        New analysis
+      </button>
+
+      <section class="side-section">
+        <div class="side-heading">Datasets</div>
+        <ul class="dataset-list" id="datasetList"></ul>
+        <button class="btn btn-ghost btn-block" id="sideUpload">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
+          Upload data
+        </button>
+        <p class="side-hint">CSV, Excel, JSON or Parquet. Drop files anywhere.</p>
+      </section>
+
+      <section class="side-section">
+        <div class="side-heading">What I can do</div>
+        <ul class="capabilities">
+          <li><b>Explore</b> data quality, distributions, segments</li>
+          <li><b>Visualize</b> trends, comparisons, relationships</li>
+          <li><b>Test</b> hypotheses with the right statistics</li>
+          <li><b>Predict</b> with validated ML models</li>
+        </ul>
+      </section>
+
+      <div class="side-footer" id="modelInfo"></div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <button class="icon-btn menu-btn" id="menuBtn" aria-label="Toggle sidebar">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div class="topbar-title" id="topbarTitle">New analysis</div>
+        <div class="conn" id="conn" title="Connection status"><span class="dot"></span><span class="conn-label">Connecting</span></div>
+      </header>
+
+      <div class="banner" id="banner" hidden></div>
+
+      <div class="scroller" id="scroller">
+        <div class="thread" id="thread">
+          <div class="empty" id="empty">
+            <div class="empty-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M6 17V11M10 17V7M14 17v-4M18 17V9"/></svg>
+            </div>
+            <h1>What would you like to learn from your data?</h1>
+            <p>Upload a dataset, then ask questions in plain language. I'll write and run the analysis, build the charts and models, and explain what I find.</p>
+            <button class="dropzone" id="emptyUpload">
+              <svg viewBox="0 0 24 24" class="icon-lg"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg>
+              <span><b>Choose a file</b> or drag it here</span>
+              <small>CSV · Excel · JSON · Parquet</small>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="composer-wrap">
+        <div class="suggestions" id="suggestions"></div>
+        <form class="composer" id="composer">
+          <button type="button" class="icon-btn" id="attachBtn" aria-label="Upload data file" title="Upload data file">
+            <svg viewBox="0 0 24 24" class="icon"><path d="M21 11.5l-8.6 8.6a5 5 0 01-7.1-7.1l8.6-8.6a3.3 3.3 0 014.7 4.7l-8.6 8.6a1.7 1.7 0 01-2.4-2.4l7.9-7.9"/></svg>
+          </button>
+          <textarea id="input" rows="1" placeholder="Ask a question about your data…" autocomplete="off"></textarea>
+          <button type="submit" class="send-btn" id="sendBtn" aria-label="Send">
+            <svg viewBox="0 0 24 24" class="icon send-icon"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+            <svg viewBox="0 0 24 24" class="icon stop-icon"><rect x="7" y="7" width="10" height="10" rx="1.5"/></svg>
+          </button>
+        </form>
+        <div class="composer-note" id="uploadStatus">Enter to send · Shift+Enter for a new line</div>
+      </div>
+    </main>
+  </div>
+
+  <input type="file" id="fileInput" multiple accept=".csv,.tsv,.txt,.xlsx,.xls,.xlsm,.json,.jsonl,.parquet" hidden>
+  <div class="drop-overlay" id="dropOverlay"><div>Drop to upload your data</div></div>
+  <div class="lightbox" id="lightbox" hidden><img alt=""></div>
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
